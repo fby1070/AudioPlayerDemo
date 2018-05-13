@@ -11,6 +11,7 @@
 #import <MediaPlayer/MediaPlayer.h>
 #import "SSCoverModel.h"
 #import <AVFoundation/AVFoundation.h>
+#import "DOUAudioStreamer.h"
 
 static void *kStatusKVOKey = &kStatusKVOKey;
 static void *kDurationKVOKey = &kDurationKVOKey;

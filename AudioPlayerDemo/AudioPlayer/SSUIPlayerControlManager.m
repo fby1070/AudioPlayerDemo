@@ -41,7 +41,7 @@
   return imageView;
 }
 
-#pragma mark - 随机播放按钮
+#pragma mark - 单曲循环按钮
 /**
  单曲循环按钮
  
@@ -86,7 +86,7 @@
       if ([AudioManager shareInstance].state == SSPlayerPlayStatePlaying) {
         [[AudioManager shareInstance] pause];
       } else if ([AudioManager shareInstance].state == SSPlayerPlayStateBuffering){
-        
+        [[AudioManager shareInstance] pause];
       } else {
         [[AudioManager shareInstance] play];
       }

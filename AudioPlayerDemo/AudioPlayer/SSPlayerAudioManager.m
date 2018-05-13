@@ -56,7 +56,10 @@
   self.currentModel.audioIndex = index;
   //设置封面信息
   [self setCoverInfo:audio];
-  
+  if (![self formatChecks:audio.url]) {
+    [self next];
+    return;
+  }
   [self.player loadAudioWithUrl:audio.url];
   
 }
@@ -104,7 +107,6 @@
       [self playWithAudioIndex:self.currentModel.audioIndex + 1];
     }
   } else if (self.playMode == SSPlayerPlayModeRepeatList) {   // 列表循环
-    NSLog(@"=====%ld",self.currentModel.audioIndex);
    [self playWithAudioIndex:self.currentModel.audioIndex + 1];
   } else if (self.playMode == SSPlayerPlayModeShuffle) {
     NSInteger index =  (NSInteger)((arc4random() % (self.currentAudioList.count  + 1)));
@@ -149,9 +151,7 @@
 - (void)didFinished:(SSDouAudioStream *)player {
   NSLog(@"播放结束");
   self.isNaturalToEndTime = YES;
-  if (self.state == SSPlayerPlayStatePause) {
-    [self next];  
-  }
+  [self next];
 }
 
 - (void)player:(SSDouAudioStream *)player bufferProgress:(float)bufferProgress totalTime:(NSTimeInterval)totalTime {
@@ -189,6 +189,22 @@
 
 - (NSError *)error {
   return self.player.error;
+}
+
+- (BOOL)formatChecks:(NSString *)url {
+  NSString *mp3 = [url substringFromIndex:url.length - 4];
+  if ([@".mp3" isEqualToString:mp3] || [@".MP3" isEqualToString:mp3]) {
+    return YES;
+  }
+  NSString *ape = [url substringFromIndex:url.length - 4];
+  if ([@".ape" isEqualToString:ape] || [@".APE" isEqualToString:ape]) {
+    return YES;
+  }
+  NSString *flac = [url substringFromIndex:url.length - 5];
+  if ([@".flac" isEqualToString:flac] || [@".FLAC" isEqualToString:flac]) {
+    return YES;
+  }
+  return NO;
 }
 
 -(void)remoteControlReceivedWithEvent:(UIEvent *)event {

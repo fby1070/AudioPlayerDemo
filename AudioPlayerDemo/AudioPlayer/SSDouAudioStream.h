@@ -7,7 +7,6 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "DOUAudioStreamer.h"
 #import <UIKit/UIKit.h>
 
 typedef enum : NSUInteger {

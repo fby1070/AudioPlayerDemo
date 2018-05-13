@@ -24,9 +24,15 @@
   [super viewDidLoad];
   self.view.backgroundColor = [UIColor whiteColor];
   self.navigationController.title = @"播放器";
+
   [RACObserve([AudioManager shareInstance], categoryList) subscribeNext:^(NSArray *x) {
     if (x.count > 0) {
-      [[AudioManager shareInstance] setAudioList:x.firstObject];
+      if ([AudioManager shareInstance].currentAudioList.count > 0) {
+        [[AudioManager shareInstance] setAudioList:[AudioManager shareInstance].currentAudioList];
+      } else {
+        [[AudioManager shareInstance] setAudioList:[AudioManager shareInstance].categoryList.firstObject];
+      }
+      
     }
   }];
   
@@ -50,6 +56,7 @@
   cover.layer.cornerRadius = 120;
   
   UIButton *coverLoading = [[UIButton alloc] init];
+  coverLoading.titleLabel.font = [UIFont systemFontOfSize:10];
   [coverLoading setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
   [self.view addSubview:coverLoading];
   [coverLoading mas_makeConstraints:^(MASConstraintMaker *make) {
@@ -64,7 +71,7 @@
       coverLoading.enabled = NO;
     } else {
       if ([AudioManager shareInstance].categoryList.count <= 0) {
-        [coverLoading setTitle:@"点击重试" forState:UIControlStateNormal];
+        [coverLoading setTitle:@"音频加载失败 请点击重试" forState:UIControlStateNormal];
         coverLoading.enabled = YES;
       } else {
         [coverLoading setTitle:@"" forState:UIControlStateNormal];
@@ -126,11 +133,13 @@
   
   [RACObserve([AudioManager shareInstance], playMode) subscribeNext:^(id x) {
     if ([x integerValue] == SSPlayerPlayModeRepeatOne) {
-      [playModeButton setImage:[UIImage imageNamed:@"cm2_icn_one"] forState:UIControlStateNormal];
-      [playModeButton setImage:[UIImage imageNamed:@"cm2_icn_one_prs"] forState:UIControlStateHighlighted];
+      [playModeButton setImage:[UIImage imageNamed:@"cm2_icn_one_prs"] forState:UIControlStateNormal];
+//      [playModeButton setImage:[UIImage imageNamed:@"cm2_icn_one_prs"] forState:UIControlStateHighlighted];
     }  else {
-      [playModeButton setImage:[UIImage imageNamed:@"cm2_icn_loop"] forState:UIControlStateNormal];
-      [playModeButton setImage:[UIImage imageNamed:@"cm2_icn_loop_prs"] forState:UIControlStateHighlighted];
+      
+      [playModeButton setImage:[UIImage imageNamed:@"cm2_icn_one"] forState:UIControlStateNormal];
+//      [playModeButton setImage:[UIImage imageNamed:@"cm2_icn_loop"] forState:UIControlStateNormal];
+//      [playModeButton setImage:[UIImage imageNamed:@"cm2_icn_loop_prs"] forState:UIControlStateHighlighted];
     }
   }];
   
@@ -180,6 +189,7 @@
   fmButton.layer.borderWidth = 1;
   [fmButton setTitle:@"FM" forState:UIControlStateNormal];
   [fmButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+  [fmButton setTitleColor:[UIColor lightGrayColor] forState:UIControlStateDisabled];
   fmButton.titleLabel.font = [UIFont systemFontOfSize:11];
   [self.view addSubview:fmButton];
   [fmButton mas_makeConstraints:^(MASConstraintMaker *make) {
@@ -194,13 +204,24 @@
   musicButton.layer.borderWidth = 1;
   [musicButton setTitle:@"音乐" forState:UIControlStateNormal];
   [musicButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+  [musicButton setTitleColor:[UIColor lightGrayColor] forState:UIControlStateDisabled];
   musicButton.titleLabel.font = [UIFont systemFontOfSize:11];
+  
   [self.view addSubview:musicButton];
   [musicButton mas_makeConstraints:^(MASConstraintMaker *make) {
     make.right.equalTo(fmButton.mas_left).offset(-10);
     make.centerY.equalTo(fmButton);
     make.size.mas_equalTo(CGSizeMake(50, 30));
   }];
+  
+  NSInteger index = [[AudioManager shareInstance].categoryList indexOfObject:[AudioManager shareInstance].currentAudioList];
+  if (index == 1) {
+    fmButton.enabled = NO;
+    musicButton.enabled = YES;
+  } else {
+    musicButton.enabled = NO;
+    fmButton.enabled = YES;
+  }
   
   [[musicButton rac_signalForControlEvents:UIControlEventTouchUpInside] subscribeNext:^(id x) {
     musicButton.enabled = NO;

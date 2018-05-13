@@ -10,5 +10,5 @@ target 'AudioPlayerDemo' do
   pod 'StarShareNetWorking'
   pod 'SDWebImage'
   pod 'DOUAudioStreamer'
-  pod 'UITip'
+
 end
