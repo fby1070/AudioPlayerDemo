@@ -38,6 +38,13 @@ typedef enum : NSUInteger {
  */
 - (void)player:(SSPlayerAudioManager *)player playMode:(SSPlayerPlayMode)playMode;
 
+/**
+ 错误码
+ 
+ @param errorCode 错误码
+ */
+- (void)player:(SSPlayerAudioManager *)player errorCode:(SSAudioStreamerErrorCode)errorCode;
+
 @end
 
 @interface SSPlayerAudioManager : NSObject
@@ -66,6 +73,11 @@ typedef enum : NSUInteger {
  当前播放模型
  */
 @property (nonatomic, strong, readonly) SSPlayerCurrentModel *currentModel;
+
+/**
+ 错误
+ */
+@property (nonatomic, strong, readonly) NSError *error;
 
 /**
  设置播放列表

@@ -19,6 +19,7 @@
 @property (nonatomic, assign, readwrite) SSPlayerPlayState state;
 @property (nonatomic, strong, readwrite) NSArray<SSAudio *> *currentAudioList;
 @property (nonatomic, strong, readwrite) SSPlayerCurrentModel *currentModel;
+
 @end
 
 @implementation SSPlayerAudioManager
@@ -178,6 +179,16 @@
   if (self.delegate && [self.delegate respondsToSelector:@selector(player:state:)]) {
     [self.delegate player:self state:state];
   }
+}
+
+- (void)player:(SSDouAudioStream *)player errorCode:(SSAudioStreamerErrorCode)errorCode {
+  if (self.delegate && [self.delegate respondsToSelector:@selector(player:errorCode:)]) {
+    [self.delegate player:self errorCode:errorCode];
+  }
+}
+
+- (NSError *)error {
+  return self.player.error;
 }
 
 -(void)remoteControlReceivedWithEvent:(UIEvent *)event {

@@ -20,6 +20,7 @@ static void *kBufferingRatioKVOKey = &kBufferingRatioKVOKey;
 
 @property (nonatomic, strong) DOUAudioStreamer *player;
 @property (nonatomic, assign, readwrite) SSPlayerPlayState state;
+@property (nonatomic, strong, readwrite) NSError *error;
 @property (nonatomic, strong) NSTimer *timer;
 @property (nonatomic, assign) BOOL isBackground;
 @end
@@ -124,6 +125,22 @@ static void *kBufferingRatioKVOKey = &kBufferingRatioKVOKey;
       break;
     case DOUAudioStreamerError:
       self.state = SSPlayerPlayStateError;
+      self.error = self.player.error;
+      SSAudioStreamerErrorCode errorCode;
+      switch (self.player.error.code) {
+        case DOUAudioStreamerNetworkError:
+          errorCode = SSudioStreamerNetworkError;
+          break;
+        case DOUAudioStreamerDecodingError:
+          errorCode = SSAudioStreamerDecodingError;
+          break;
+        default:
+          errorCode = SSudioStreamerUnknownError;
+          break;
+      }
+      if (self.delegate && [self.delegate respondsToSelector:@selector(player:errorCode:)]) {
+        [self.delegate player:self errorCode:errorCode];
+      }
       break;
   }
   if (self.delegate && [self.delegate respondsToSelector:@selector(player:state:)]) {

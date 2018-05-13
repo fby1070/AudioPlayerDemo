@@ -163,6 +163,12 @@
   model.currentTime = self.playerAudioManager.currentModel.currentTime;
 }
 
+-(void)remoteControlReceivedWithEvent:(UIEvent *)event {
+  [self.playerAudioManager remoteControlReceivedWithEvent:event];
+}
+
+#pragma mark Delegate
+
 - (void)player:(SSPlayerAudioManager *)player state:(SSPlayerPlayState)state {
   self.state = state;
   if (state == SSPlayerPlayStateError) {
@@ -181,8 +187,15 @@
   }
 }
 
--(void)remoteControlReceivedWithEvent:(UIEvent *)event {
-  [self.playerAudioManager remoteControlReceivedWithEvent:event];
+- (void)player:(SSPlayerAudioManager *)player errorCode:(SSAudioStreamerErrorCode)errorCode {
+  if (errorCode == SSudioStreamerNetworkError) {
+    NSLog(@"网络错误");
+  } else if (errorCode == SSudioStreamerNetworkError) {
+    NSLog(@"解析错误");
+  } else {
+    NSLog(@"未知错误");
+  }
+  
 }
 
 #pragma mark 单例

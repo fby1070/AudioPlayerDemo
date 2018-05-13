@@ -19,6 +19,12 @@ typedef enum : NSUInteger {
   SSPlayerPlayStateError,                 //错误
 } SSPlayerPlayState;
 
+typedef enum : NSUInteger {
+  SSudioStreamerUnknownError,
+  SSudioStreamerNetworkError,
+  SSAudioStreamerDecodingError
+} SSAudioStreamerErrorCode;
+
 @class SSDouAudioStream;
 @class SSCoverModel;
 
@@ -57,12 +63,11 @@ typedef enum : NSUInteger {
 - (void)didFinished:(SSDouAudioStream *)player;
 
 /**
- 播放状态码代理
+ 错误码
  
- @param player SSDouAudioStream音频播放管理器
- @param statusCode 状态码
+ @param errorCode 错误码
  */
-//- (void)player:(SSDouAudioStream *)player didGetStatusCode:(SSDouAudioStreamStatusCode)statusCode;
+- (void)player:(SSDouAudioStream *)player errorCode:(SSAudioStreamerErrorCode)errorCode;
 
 @end
 
@@ -82,6 +87,11 @@ typedef enum : NSUInteger {
  播放器状态
  */
 @property (nonatomic, assign, readonly) SSPlayerPlayState state;
+
+/**
+ 错误
+ */
+@property (nonatomic, strong, readonly) NSError *error;
 
 /**
  加载音频
