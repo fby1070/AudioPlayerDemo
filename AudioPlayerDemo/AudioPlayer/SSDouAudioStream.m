@@ -12,6 +12,9 @@
 #import "SSCoverModel.h"
 #import <AVFoundation/AVFoundation.h>
 #import "DOUAudioStreamer.h"
+#import "DOUAudioEventLoop.h"
+
+NSString *const kSSAudioStreamerErrorDomain = @"streamer.error-domain";
 
 static void *kStatusKVOKey = &kStatusKVOKey;
 static void *kDurationKVOKey = &kDurationKVOKey;
@@ -44,6 +47,7 @@ static void *kBufferingRatioKVOKey = &kBufferingRatioKVOKey;
     [self removeStreamerObserver];
     self.player = nil;
   }
+  
   Track *track = [[Track alloc] init];
   track.audioFileURL = [NSURL URLWithString:audioUrl];
   self.player = [DOUAudioStreamer streamerWithAudioFile:track];
@@ -131,12 +135,21 @@ static void *kBufferingRatioKVOKey = &kBufferingRatioKVOKey;
       switch (self.player.error.code) {
         case DOUAudioStreamerNetworkError:
           errorCode = SSudioStreamerNetworkError;
+          [self setError:[NSError errorWithDomain:kSSAudioStreamerErrorDomain
+                                                 code:SSudioStreamerNetworkError
+                                             userInfo:nil]];
           break;
         case DOUAudioStreamerDecodingError:
+          [self setError:[NSError errorWithDomain:kSSAudioStreamerErrorDomain
+                                             code:SSAudioStreamerDecodingError
+                                         userInfo:nil]];
           errorCode = SSAudioStreamerDecodingError;
           break;
         default:
           errorCode = SSudioStreamerUnknownError;
+          [self setError:[NSError errorWithDomain:kSSAudioStreamerErrorDomain
+                                             code:SSudioStreamerUnknownError
+                                         userInfo:nil]];
           break;
       }
       if (self.delegate && [self.delegate respondsToSelector:@selector(player:errorCode:)]) {

@@ -54,6 +54,7 @@
   //更新当前播放信息
   self.currentModel.audio = audio;
   self.currentModel.audioIndex = index;
+  self.currentModel.totalTime = 0;
   //设置封面信息
   [self setCoverInfo:audio];
   if (![self formatChecks:audio.url]) {
@@ -77,7 +78,12 @@
   } else if (self.state == SSPlayerPlayStateFinished) { //模式为只播放一次时点击播放
     [self playWithAudioIndex:self.currentModel.audioIndex];
   } else if (self.state == SSPlayerPlayStateError) {
-    [self next];
+    if (self.error.code == SSudioStreamerNetworkError) {
+      [self playWithAudioIndex:self.currentModel.audioIndex];
+       [self.player play];
+    } else {
+      [self next];
+    }
   } else {
 
   }
