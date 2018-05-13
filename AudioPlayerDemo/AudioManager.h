@@ -157,7 +157,7 @@
  */
 - (void)setCurrentTime:(NSTimeInterval)time;
 
-- (void)fiveSecondsLoad;
+- (void)failedRequest;
 
 - (void)threeSecondsLoad;
 @end

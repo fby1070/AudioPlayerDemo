@@ -12,6 +12,7 @@
 #import "SSUIPlayerControlManager.h"
 #import "Masonry.h"
 #import "SSHomeViewController.h"
+#import "AudioManager.h"
 
 @interface ViewController ()
 
@@ -21,15 +22,44 @@
 
 - (void)viewDidLoad {
   [super viewDidLoad];
-  UIButton *button = [[UIButton alloc] initWithFrame:CGRectMake(200, 300, 80, 40)];
-  [button setTitle:@"开始" forState:UIControlStateNormal];
-  [button setTitleColor:[UIColor redColor] forState:UIControlStateNormal];
-  [button addTarget:self action:@selector(buttonClick) forControlEvents:UIControlEventTouchUpInside];
-  [self.view addSubview:button];
+  
+  UIButton *nowButton = [[UIButton alloc] initWithFrame:CGRectMake(200, 300, 80, 40)];
+  [nowButton setTitle:@"立即" forState:UIControlStateNormal];
+  [nowButton setTitleColor:[UIColor redColor] forState:UIControlStateNormal];
+  [nowButton addTarget:self action:@selector(nowButtonClick) forControlEvents:UIControlEventTouchUpInside];
+  [self.view addSubview:nowButton];
+  
+  UIButton *threeSeconds = [[UIButton alloc] initWithFrame:CGRectMake(200, 400, 80, 40)];
+  [threeSeconds setTitle:@"三秒开始" forState:UIControlStateNormal];
+  [threeSeconds setTitleColor:[UIColor redColor] forState:UIControlStateNormal];
+  [threeSeconds addTarget:self action:@selector(threeSecondsClick) forControlEvents:UIControlEventTouchUpInside];
+  [self.view addSubview:threeSeconds];
+  
+
+  UIButton *failedButton = [[UIButton alloc] initWithFrame:CGRectMake(200, 500, 80, 40)];
+  [failedButton setTitle:@"失败" forState:UIControlStateNormal];
+  [failedButton setTitleColor:[UIColor redColor] forState:UIControlStateNormal];
+  [failedButton addTarget:self action:@selector(failedClick) forControlEvents:UIControlEventTouchUpInside];
+  [self.view addSubview:failedButton];
 
 }
 
-- (void)buttonClick {
+- (void)nowButtonClick {
+  [[AudioManager shareInstance] requestAudioList];
+  SSHomeViewController *vc = [[SSHomeViewController alloc] init];
+  UINavigationController *nc = [[UINavigationController alloc] initWithRootViewController:vc];
+  [self presentViewController:nc animated:YES completion:nil];
+}
+
+- (void)threeSecondsClick {
+  [[AudioManager shareInstance] threeSecondsLoad];
+  SSHomeViewController *vc = [[SSHomeViewController alloc] init];
+  UINavigationController *nc = [[UINavigationController alloc] initWithRootViewController:vc];
+  [self presentViewController:nc animated:YES completion:nil];
+}
+
+- (void)failedClick {
+  [[AudioManager shareInstance] failedRequest];;
   SSHomeViewController *vc = [[SSHomeViewController alloc] init];
   UINavigationController *nc = [[UINavigationController alloc] initWithRootViewController:vc];
   [self presentViewController:nc animated:YES completion:nil];

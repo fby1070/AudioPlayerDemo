@@ -24,14 +24,18 @@
   [super viewDidLoad];
   self.view.backgroundColor = [UIColor whiteColor];
   self.navigationController.title = @"播放器";
-
+  [RACObserve([AudioManager shareInstance], categoryList) subscribeNext:^(NSArray *x) {
+    if (x.count > 0) {
+      [[AudioManager shareInstance] setAudioList:x.firstObject];
+    }
+  }];
   
   [[NSNotificationCenter defaultCenter] addObserver:self
                                            selector:@selector(didBecomeActive:)
                                                name:UIApplicationDidBecomeActiveNotification object:nil];
   [self initViews];
   
-  if ([AudioManager shareInstance].state == SSPlayerPlayStatePause || [AudioManager shareInstance].state == SSPlayerPlayStateIdle) {
+  if ([AudioManager shareInstance].state == SSPlayerPlayStatePause) {
     [[AudioManager shareInstance] play];
   }
   
@@ -132,29 +136,41 @@
   
   UILabel *currentLabel = [self.controlManager currentTimeLabelWithSuperView:self.view makeConstraints:^(MASConstraintMaker *make) {
     make.bottom.equalTo(playButton.mas_top).offset(-30);
-    make.left.equalTo(self.view).offset(10);
+    make.centerX.equalTo(self.view).offset(-15);
     make.width.mas_equalTo (40);
   }];
   
-  UILabel *totalLabel = [self.controlManager totalTimeLabelWithSuperView:self.view makeConstraints:^(MASConstraintMaker *make) {
+  [self.controlManager totalTimeLabelWithSuperView:self.view makeConstraints:^(MASConstraintMaker *make) {
     make.centerY.equalTo(currentLabel);
-    make.right.equalTo(self.view).offset(-10);
+    make.left.equalTo(currentLabel.mas_right).offset(2);
+  }];
+  
+  UILabel *fenggeLabel = [[UILabel alloc] init];
+  fenggeLabel.font = [UIFont systemFontOfSize:10];
+  fenggeLabel.textColor = [UIColor whiteColor];
+  fenggeLabel.text = @"/";
+  [self.view addSubview:fenggeLabel];
+  [fenggeLabel mas_makeConstraints:^(MASConstraintMaker *make) {
+    make.left.equalTo(currentLabel.mas_right).offset(-3);
+    make.centerY.equalTo(currentLabel);
   }];
   
   UIProgressView *progressView = [self.controlManager playProgressViewWithSuperView:self.view trackTintColor:[UIColor lightGrayColor] progressTintColor:[UIColor redColor] makeConstraints:^(MASConstraintMaker *make) {
-    make.centerY.equalTo(currentLabel);
-    make.left.equalTo(currentLabel.mas_right).offset(10);
-    make.right.equalTo(totalLabel.mas_left).offset(-10);
+    make.bottom.equalTo(playButton.mas_top).offset(-60);
+    make.left.equalTo(self.view).offset(15);
+    make.right.equalTo(self.view).offset(-15);
     make.height.mas_equalTo(2);
   }];
   
+  
+  
   [self.controlManager audioNameLabelWithSuperView:self.view makeConstraints:^(MASConstraintMaker *make) {
-    make.bottom.equalTo(progressView.mas_top).offset(-60);
+    make.bottom.equalTo(progressView.mas_top).offset(-20);
     make.centerX.equalTo(progressView);
   }];
   
   [self.controlManager audioSingerLabelWithSuperView:self.view makeConstraints:^(MASConstraintMaker *make) {
-    make.bottom.equalTo(progressView.mas_top).offset(-90);
+    make.bottom.equalTo(progressView.mas_top).offset(-40);
     make.centerX.equalTo(progressView);
   }];
  
@@ -223,6 +239,24 @@
       playButton.enabled = YES;
       nextButton.enabled = YES;
       playModeButton.enabled = YES;
+    }
+  }];
+  
+  UIView *tipView = [[UIView alloc] init];
+  tipView.layer.cornerRadius = 3;
+  [self.view addSubview:tipView];
+  
+  [tipView mas_makeConstraints:^(MASConstraintMaker *make) {
+    make.size.mas_equalTo(CGSizeMake(6, 6));
+    make.left.equalTo(playButton.mas_right).offset(15);
+    make.bottom.equalTo(playButton.mas_top);
+  }];
+  
+  [RACObserve([AudioManager shareInstance], state) subscribeNext:^(id x) {
+    if ([x integerValue] == SSPlayerPlayStatePlaying || [x integerValue] == SSPlayerPlayStateBuffering) {
+      tipView.backgroundColor = [UIColor greenColor];
+    } else {
+      tipView.backgroundColor = [UIColor lightGrayColor];
     }
   }];
 }

@@ -59,10 +59,13 @@
   //      self.endBlock();
   //    }
   //  }];
-  
-  self.isRequsetingNetwork = YES;
+
+
   //TODO 重置播放器
-//  [self delayMethod];
+  self.categoryList = @[[self fmList], [self audioList]];
+  //创建播放器保存信息数组
+  [self creatSavePlayerInfo];
+  self.isRequsetingNetwork = NO;
 }
 
 - (void)cancelRequest {
@@ -201,9 +204,9 @@ static AudioManager* _instance = nil;
   return [AudioManager shareInstance];
 }
 
-- (void)fiveSecondsLoad {
+- (void)failedRequest {
   self.isRequsetingNetwork = YES;
-  [NSTimer scheduledTimerWithTimeInterval:5.0 target:self selector:@selector(delayMethod) userInfo:nil repeats:NO];
+  [self failedLoad];
 }
 
 - (void)threeSecondsLoad {
@@ -216,7 +219,10 @@ static AudioManager* _instance = nil;
   //创建播放器保存信息数组
   [self creatSavePlayerInfo];
   self.isRequsetingNetwork = NO;
-  [self setAudioList:self.categoryList.firstObject];
+}
+
+- (void)failedLoad {
+   self.isRequsetingNetwork = NO;
 }
 
 - (NSArray *)audioList {
