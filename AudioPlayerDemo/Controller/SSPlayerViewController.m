@@ -181,6 +181,7 @@
   [self.controlManager audioSingerLabelWithSuperView:self.view makeConstraints:^(MASConstraintMaker *make) {
     make.bottom.equalTo(progressView.mas_top).offset(-40);
     make.centerX.equalTo(progressView);
+    make.width.mas_equalTo(150);
   }];
  
   UIButton *fmButton = [[UIButton alloc] init];
@@ -251,8 +252,8 @@
     [[AudioManager shareInstance] setCurrentTime:240];
   }];
   
-  [RACObserve([AudioManager shareInstance], isRequsetingNetwork) subscribeNext:^(id x) {
-    if ([x boolValue]) {
+  [RACObserve([AudioManager shareInstance], categoryList) subscribeNext:^(id x) {
+    if (x == nil) {
       playButton.enabled = NO;
       nextButton.enabled = NO;
       playModeButton.enabled = NO;

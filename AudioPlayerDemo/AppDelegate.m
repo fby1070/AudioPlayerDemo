@@ -17,7 +17,7 @@
 
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
-  [[AudioManager shareInstance] settingUpPlayMode:SSPlayerPlayModeRepeatOne];
+  [[AudioManager shareInstance] settingUpPlayMode:SSPlayerPlayModeRepeatList];
 //  [[AudioManager shareInstance] requestAudioList];
   return YES;
 }

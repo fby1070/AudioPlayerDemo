@@ -97,13 +97,7 @@
     //给播放器音频列表，并设置播放索引
     [self.playerAudioManager settingUpAudioList:audioList];
     SSPlayerCurrentModel *model = [self getInfoModelByCategoryList:audioList];
-    if (model.currentTime > 0) {
-      [self.playerAudioManager playWithAudioIndex:model.audioIndex + 1];
-    } else {
-      [self.playerAudioManager playWithAudioIndex:model.audioIndex];
-    }
-  } else {
-    
+    [self.playerAudioManager playWithAudioIndex:model.audioIndex + 1];
   }
   [self.playerAudioManager play];
 }
@@ -139,6 +133,7 @@
     if (self.categoryList[i].firstObject != nil) {
       model.audio = self.categoryList[i].firstObject;
     }
+    model.audioIndex = -1;
     [array addObject:model];
   }
   self.savePlayerInfo = [array copy];
@@ -240,7 +235,7 @@ static AudioManager* _instance = nil;
   //数据
   SSAudio *audio0 = [[SSAudio alloc] init];
   audio0.url = @"http://other.web.re01.sycdn.kuwo.cn/resource/n3/67/10/2645918637.mp3";
-  audio0.name = @"你还要我怎样";
+  audio0.name = @"你还要我怎样你还要我怎样你还要我怎样你还要我怎样你还要我怎样你还要我怎样";
   audio0.singer = @"薛之谦";
   audio0.cover = @"http://star.kuwo.cn/star/starheads/180/10/94/745334819.jpg";
   audio0.length = 310;

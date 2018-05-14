@@ -47,7 +47,7 @@
   if (self.currentAudioList.count <= 0) return;
   if (index >= self.currentAudioList.count ) index = 0;
   if (index < 0) index = self.currentAudioList.count - 1;
-  if (self.state == SSPlayerPlayStatePlaying) {
+  if (self.state == SSPlayerPlayStatePlaying || self.state == SSPlayerPlayStateBuffering) {
     [self.player pause];
   }
   SSAudio * audio = self.currentAudioList[index];
