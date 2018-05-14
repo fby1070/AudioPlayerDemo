@@ -127,7 +127,7 @@
 - (void)next;
 
 /**
- 上一首(暂无)
+ 上一首
  */
 - (void)previous;
 

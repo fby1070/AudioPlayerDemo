@@ -203,7 +203,7 @@ static void *kBufferingRatioKVOKey = &kBufferingRatioKVOKey;
 }
 
 - (void)_playerAudioRouteChange:(NSNotification *)notification {
-  //  [self pause];
+
 }
 
 - (void)_playerAudioBeInterrupted:(NSNotification *)notification {
