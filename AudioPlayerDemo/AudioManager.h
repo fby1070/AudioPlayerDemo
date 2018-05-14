@@ -96,12 +96,17 @@
  */
 @property (nonatomic, strong, readonly) NSArray<SSAudio *> *currentAudioList;
 
+/**
+ 错误
+ */
+@property (nonatomic, strong, readonly) NSError *error;
+
 //单例
 + (instancetype)shareInstance;
 
 /**
  切换播放列表
-
+ 
  @param audioList 播放列表
  */
 - (void)setAudioList:(NSArray<SSAudio *> *)audioList;
@@ -152,7 +157,7 @@
 
 /**
  设置进度
-
+ 
  @param time 时间（s）
  */
 - (void)setCurrentTime:(NSTimeInterval)time;

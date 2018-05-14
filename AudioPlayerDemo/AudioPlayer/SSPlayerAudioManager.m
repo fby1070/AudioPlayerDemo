@@ -55,38 +55,18 @@
   self.currentModel.audio = audio;
   self.currentModel.audioIndex = index;
   self.currentModel.totalTime = 0;
-  //设置封面信息
-  [self setCoverInfo:audio];
   if (![self formatChecks:audio.url]) {
     [self next];
     return;
   }
+  //设置封面信息
+  [self setCoverInfo:audio];
   [self.player loadAudioWithUrl:audio.url];
   
 }
 
-- (void)play {
-  
-  if (self.state == SSPlayerPlayStateIdle) {
-    [self playWithAudioIndex:0];
-    [self.player play];
-    return;
-  } else if (self.state == SSPlayerPlayStatePause) {
-    [self.player play];
-  } else if (self.state == SSPlayerPlayStatePlaying) {
-      [self.player play];
-  } else if (self.state == SSPlayerPlayStateFinished) { //模式为只播放一次时点击播放
-    [self playWithAudioIndex:self.currentModel.audioIndex];
-  } else if (self.state == SSPlayerPlayStateError) {
-    if (self.error.code == SSudioStreamerNetworkError) {
-      [self playWithAudioIndex:self.currentModel.audioIndex];
-       [self.player play];
-    } else {
-      [self next];
-    }
-  } else {
-
-  }
+- (void)play {  
+  [self.player play];
 }
 
 - (void)pause {
@@ -108,15 +88,15 @@
   } else if (self.playMode == SSPlayerPlayModeRepeatOne) {   //单曲循环
     if (self.isNaturalToEndTime) {
       self.isNaturalToEndTime = NO;
-       [self playWithAudioIndex:self.currentModel.audioIndex];
+      [self playWithAudioIndex:self.currentModel.audioIndex];
     } else {
       [self playWithAudioIndex:self.currentModel.audioIndex + 1];
     }
   } else if (self.playMode == SSPlayerPlayModeRepeatList) {   // 列表循环
-   [self playWithAudioIndex:self.currentModel.audioIndex + 1];
+    [self playWithAudioIndex:self.currentModel.audioIndex + 1];
   } else if (self.playMode == SSPlayerPlayModeShuffle) {
     NSInteger index =  (NSInteger)((arc4random() % (self.currentAudioList.count  + 1)));
-   [self playWithAudioIndex:index];
+    [self playWithAudioIndex:index];
   } else if (self.playMode == SSPlayerPlayModePlayOnce) {    //播放一次
     if (self.isNaturalToEndTime) {
       self.isNaturalToEndTime = NO;
@@ -152,7 +132,6 @@
 - (void)setCurrentTime:(NSTimeInterval)time {
   [self.player setPlayProgress:time];
 }
-
 
 - (void)didFinished:(SSDouAudioStream *)player {
   NSLog(@"播放结束");

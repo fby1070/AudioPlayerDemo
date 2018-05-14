@@ -18,7 +18,9 @@
 @property (nonatomic, assign, readwrite) SSPlayerPlayMode playMode;
 @property (nonatomic, strong, readwrite) NSArray<NSArray<SSAudio *> *> *categoryList;
 @property (nonatomic, strong) NSArray<SSPlayerCurrentModel *> *savePlayerInfo;
-@property (nonatomic,strong) id<INetRequestHandle> requestHandle;
+@property (nonatomic, strong) id<INetRequestHandle> requestHandle;
+//为了偷偷的帮你重新请求一次设置的标志位
+@property (nonatomic, assign) BOOL replayed;
 @end
 
 @implementation AudioManager
@@ -59,7 +61,7 @@
   //      self.endBlock();
   //    }
   //  }];
-
+  
   self.categoryList = @[[self fmList], [self audioList]];
   //创建播放器保存信息数组
   [self creatSavePlayerInfo];
@@ -97,13 +99,39 @@
     //给播放器音频列表，并设置播放索引
     [self.playerAudioManager settingUpAudioList:audioList];
     SSPlayerCurrentModel *model = [self getInfoModelByCategoryList:audioList];
-    [self.playerAudioManager playWithAudioIndex:model.audioIndex + 1];
+    if (!model.isPlayed) {
+      model.isPlayed = YES;
+      [self.playerAudioManager playWithAudioIndex:model.audioIndex];
+    } else {
+      [self.playerAudioManager playWithAudioIndex:model.audioIndex + 1];
+    }
+    self.replayed = NO;
   }
   [self.playerAudioManager play];
 }
 
 - (void)play {
-  [self.playerAudioManager play];
+  if (self.state == SSPlayerPlayStateIdle) {
+    [self.playerAudioManager playWithAudioIndex:self.currentModel.audioIndex];
+    [self.playerAudioManager play];
+  } else if (self.state == SSPlayerPlayStatePause) {
+    [self.playerAudioManager play];
+  } else if (self.state == SSPlayerPlayStateFinished) { //模式为只播放一次时点击播放
+    [self.playerAudioManager playWithAudioIndex:self.currentModel.audioIndex];
+    [self.playerAudioManager play];
+  } else if (self.state == SSPlayerPlayStateError) {
+    if (self.error.code == SSudioStreamerNetworkError) {
+      [self.playerAudioManager playWithAudioIndex:self.currentModel.audioIndex];
+      [self.playerAudioManager play];
+    } else {
+      [self next];
+    }
+  }
+  
+}
+
+- (NSError *)error {
+  return self.playerAudioManager.error;
 }
 
 - (void)pause {
@@ -111,6 +139,7 @@
 }
 
 - (void)next {
+  self.replayed = NO;
   [self.playerAudioManager next];
 }
 
@@ -133,7 +162,7 @@
     if (self.categoryList[i].firstObject != nil) {
       model.audio = self.categoryList[i].firstObject;
     }
-    model.audioIndex = -1;
+    model.audioIndex = 0;
     [array addObject:model];
   }
   self.savePlayerInfo = [array copy];
@@ -183,6 +212,10 @@
 - (void)player:(SSPlayerAudioManager *)player errorCode:(SSAudioStreamerErrorCode)errorCode {
   if (errorCode == SSudioStreamerNetworkError) {
     NSLog(@"网络错误");
+    if (!self.replayed) {
+      self.replayed = YES;
+      [self.playerAudioManager play];
+    }
   } else if (errorCode == SSudioStreamerNetworkError) {
     NSLog(@"解析错误");
   } else {
@@ -216,7 +249,7 @@ static AudioManager* _instance = nil;
 }
 
 - (void)threeSecondsLoad {
-    self.isRequsetingNetwork = YES;
+  self.isRequsetingNetwork = YES;
   [NSTimer scheduledTimerWithTimeInterval:3.0 target:self selector:@selector(delayMethod) userInfo:nil repeats:NO];
 }
 
@@ -228,7 +261,7 @@ static AudioManager* _instance = nil;
 }
 
 - (void)failedLoad {
-   self.isRequsetingNetwork = NO;
+  self.isRequsetingNetwork = NO;
 }
 
 - (NSArray *)audioList {
@@ -298,6 +331,6 @@ static AudioManager* _instance = nil;
 }
 
 - (void)setCurrentTime:(NSTimeInterval)time {
-    [self.playerAudioManager setCurrentTime:time];
+  [self.playerAudioManager setCurrentTime:time];
 }
 @end

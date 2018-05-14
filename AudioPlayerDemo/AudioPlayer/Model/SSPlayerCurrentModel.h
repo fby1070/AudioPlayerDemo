@@ -40,4 +40,9 @@
  当前音频缓冲进度
  */
 @property (nonatomic, assign) NSInteger bufferProgress;
+
+/**
+ 当前模型是否播放过
+ */
+@property (nonatomic, assign) BOOL isPlayed;
 @end

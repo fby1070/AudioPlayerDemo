@@ -33,7 +33,7 @@
   UIImageView *imageView = [[UIImageView alloc] init];
   [superView addSubview:imageView];
   [imageView mas_makeConstraints:block];
-
+  
   [RACObserve([AudioManager shareInstance].currentModel, audio) subscribeNext:^(SSAudio *audio) {
     [imageView sd_setImageWithURL:[NSURL URLWithString:audio.cover] placeholderImage:[UIImage imageWithColor:[UIColor lightGrayColor] size:CGSizeMake(80, 80) cornerRadius:0]];
   }];
@@ -83,13 +83,13 @@
   UIButton *button = [self btnWithSuperView:superView makeConstraints:block];
   
   [[button rac_signalForControlEvents:UIControlEventTouchUpInside] subscribeNext:^(id x) {
-      if ([AudioManager shareInstance].state == SSPlayerPlayStatePlaying) {
-        [[AudioManager shareInstance] pause];
-      } else if ([AudioManager shareInstance].state == SSPlayerPlayStateBuffering){
-        [[AudioManager shareInstance] pause];
-      } else {
-        [[AudioManager shareInstance] play];
-      }
+    if ([AudioManager shareInstance].state == SSPlayerPlayStatePlaying) {
+      [[AudioManager shareInstance] pause];
+    } else if ([AudioManager shareInstance].state == SSPlayerPlayStateBuffering){
+      [[AudioManager shareInstance] pause];
+    } else {
+      [[AudioManager shareInstance] play];
+    }
     
     
     if (action != nil) {
@@ -140,7 +140,7 @@
   playProgressView.progressTintColor = progressTintColor;
   [superView addSubview:playProgressView];
   [playProgressView mas_makeConstraints:block];
-
+  
   [RACObserve([AudioManager shareInstance].currentModel, progress) subscribeNext:^(id value) {
     [playProgressView setProgress:[value floatValue]];
   }];
@@ -192,9 +192,9 @@
   totalLabel.textAlignment = NSTextAlignmentCenter;
   [superView addSubview:totalLabel];
   [totalLabel mas_makeConstraints:block];
-
-  [RACObserve([AudioManager shareInstance].currentModel, totalTime) subscribeNext:^(id value) {
-    totalLabel.text = [SSPlayerTimeFormat getFormatTime:[value integerValue]];
+  
+  [RACObserve([AudioManager shareInstance].currentModel, audio) subscribeNext:^(SSAudio *audio) {
+    totalLabel.text = [SSPlayerTimeFormat getFormatTime:audio.length];
   }];
   return totalLabel;
 }
@@ -214,9 +214,9 @@
   nameLabel.textAlignment = NSTextAlignmentCenter;
   [superView addSubview:nameLabel];
   [nameLabel mas_makeConstraints:block];
-
+  
   [RACObserve([AudioManager shareInstance].currentModel, audio) subscribeNext:^(SSAudio *audio) {
-     nameLabel.text = audio.singer;
+    nameLabel.text = audio.singer;
   }];
   return nameLabel;
 }
@@ -236,9 +236,9 @@
   singerLabel.font = [UIFont systemFontOfSize:13];
   [superView addSubview:singerLabel];
   [singerLabel mas_makeConstraints:block];
-
+  
   [RACObserve([AudioManager shareInstance].currentModel, audio) subscribeNext:^(SSAudio *audio) {
-   singerLabel.text = audio.name;
+    singerLabel.text = audio.name;
   }];
   return singerLabel;
 }

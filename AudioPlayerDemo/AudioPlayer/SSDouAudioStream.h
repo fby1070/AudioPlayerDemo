@@ -56,7 +56,7 @@ typedef enum : NSUInteger {
 
 /**
  播放结束
-
+ 
  @param player SSDouAudioStream音频播放管理器
  */
 - (void)didFinished:(SSDouAudioStream *)player;
@@ -94,14 +94,14 @@ typedef enum : NSUInteger {
 
 /**
  加载音频
-
+ 
  @param audioUrl 音频url
  */
 - (void)loadAudioWithUrl:(NSString *)audioUrl;
 
 /**
  设置播放进度（单位  s）
-
+ 
  @param value 设置的秒数
  */
 - (void)setPlayProgress:(NSTimeInterval)value;

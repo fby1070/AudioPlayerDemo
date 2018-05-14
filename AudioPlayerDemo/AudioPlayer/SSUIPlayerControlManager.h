@@ -21,7 +21,7 @@
  @return 封面图
  */
 - (UIImageView *_Nullable)coverImageViewWithSuperView:(UIView *)superView
-                                   makeConstraints:(void(^)(MASConstraintMaker *make))block;
+                                      makeConstraints:(void(^)(MASConstraintMaker *make))block;
 
 /**
  单曲循环按钮
@@ -32,8 +32,8 @@
  @return 单曲循环按钮
  */
 - (UIButton *_Nullable)singleCycleButtonWithSuperView:(UIView *)superView
-                                              action:(void(^)(void))action
-                                     makeConstraints:(void(^)(MASConstraintMaker *make))block;
+                                               action:(void(^)(void))action
+                                      makeConstraints:(void(^)(MASConstraintMaker *make))block;
 
 /**
  播放暂停按钮

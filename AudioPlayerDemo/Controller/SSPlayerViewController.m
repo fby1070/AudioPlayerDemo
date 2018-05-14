@@ -35,10 +35,7 @@
       
     }
   }];
-  
-  [[NSNotificationCenter defaultCenter] addObserver:self
-                                           selector:@selector(didBecomeActive:)
-                                               name:UIApplicationDidBecomeActiveNotification object:nil];
+
   [self initViews];
   
   if ([AudioManager shareInstance].state == SSPlayerPlayStatePause) {
@@ -228,14 +225,12 @@
     musicButton.enabled = NO;
     fmButton.enabled = YES;
     [[AudioManager shareInstance] setAudioList:[AudioManager shareInstance].categoryList[0]] ;
-    [[AudioManager shareInstance] play];
   }];
   
   [[fmButton rac_signalForControlEvents:UIControlEventTouchUpInside] subscribeNext:^(id x) {
     fmButton.enabled = NO;
     musicButton.enabled = YES;
     [[AudioManager shareInstance] setAudioList:[AudioManager shareInstance].categoryList[1]] ;
-    [[AudioManager shareInstance] play];
   }];
   
   UIButton *setCurrentTime = [[UIButton alloc] init];
@@ -302,12 +297,6 @@
   }];
 }
 
-- (void)didBecomeActive:(NSNotification *)notification {
-  NSLog(@"进入前台");
-  if ([AudioManager shareInstance].state == SSPlayerPlayStatePause) {
-    [[AudioManager shareInstance] play];
-  }
-}
 
 
 - (void)dealloc {

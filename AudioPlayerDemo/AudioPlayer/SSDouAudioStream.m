@@ -52,9 +52,7 @@ static void *kBufferingRatioKVOKey = &kBufferingRatioKVOKey;
   track.audioFileURL = [NSURL URLWithString:audioUrl];
   self.player = [DOUAudioStreamer streamerWithAudioFile:track];
   [self addStreamerObserver];
-  
-  //锁屏后台信息
-  [self addInformationOfLockScreen];
+  [self updateControlCenterInfo];
 }
 
 - (void)setPlayProgress:(NSTimeInterval)value {
@@ -136,8 +134,8 @@ static void *kBufferingRatioKVOKey = &kBufferingRatioKVOKey;
         case DOUAudioStreamerNetworkError:
           errorCode = SSudioStreamerNetworkError;
           [self setError:[NSError errorWithDomain:kSSAudioStreamerErrorDomain
-                                                 code:SSudioStreamerNetworkError
-                                             userInfo:nil]];
+                                             code:SSudioStreamerNetworkError
+                                         userInfo:nil]];
           break;
         case DOUAudioStreamerDecodingError:
           [self setError:[NSError errorWithDomain:kSSAudioStreamerErrorDomain
@@ -203,7 +201,7 @@ static void *kBufferingRatioKVOKey = &kBufferingRatioKVOKey;
 }
 
 - (void)_playerAudioRouteChange:(NSNotification *)notification {
-
+  
 }
 
 - (void)_playerAudioBeInterrupted:(NSNotification *)notification {
@@ -215,18 +213,28 @@ static void *kBufferingRatioKVOKey = &kBufferingRatioKVOKey;
 }
 
 //锁屏、后台模式信息
-- (void)addInformationOfLockScreen {
-  if (!self.coverModel.audioName &&
-      !self.coverModel.audioAlbum &&
-      !self.coverModel.audioSinger
-      ) {
-    return;
+- (void)updateControlCenterInfo {
+  NSDictionary *info = [[MPNowPlayingInfoCenter defaultCenter] nowPlayingInfo];
+  NSMutableDictionary *dic = [NSMutableDictionary dictionaryWithDictionary:info];
+  //音频名
+  if (self.coverModel.audioName == nil || [self.coverModel.audioName isEqualToString:@""]) {
+    dic[MPMediaItemPropertyTitle] = @"未知";
+  } else {
+    dic[MPMediaItemPropertyTitle] = self.coverModel.audioName;
   }
-  
-  NSMutableDictionary *dic = [NSMutableDictionary dictionary];
-  dic[MPMediaItemPropertyTitle] = self.coverModel.audioName;
-  dic[MPMediaItemPropertyArtist] = self.coverModel.audioSinger;
-  dic[MPMediaItemPropertyAlbumTitle] = self.coverModel.audioAlbum;
+  //歌手
+  if (self.coverModel.audioSinger == nil || [self.coverModel.audioSinger isEqualToString:@""]) {
+    dic[MPMediaItemPropertyArtist] = @"未知歌手";
+  } else {
+    dic[MPMediaItemPropertyArtist] = self.coverModel.audioSinger;
+  }
+  //专辑名
+  if (self.coverModel.audioAlbum == nil || [self.coverModel.audioAlbum isEqualToString:@""]) {
+    dic[MPMediaItemPropertyAlbumTitle] = @"未知专辑";
+  } else {
+    dic[MPMediaItemPropertyAlbumTitle] = self.coverModel.audioAlbum;
+  }
+  //封面图
   if ([self.coverModel.audioImage isKindOfClass:[UIImage class]] && self.coverModel.audioImage) {
     if (@available(iOS 10.0, *)) {
       MPMediaItemArtwork *artwork = [[MPMediaItemArtwork alloc] initWithBoundsSize:CGSizeMake(200, 100) requestHandler:^UIImage * _Nonnull(CGSize size) {
@@ -238,12 +246,6 @@ static void *kBufferingRatioKVOKey = &kBufferingRatioKVOKey;
       dic[MPMediaItemPropertyArtwork] = artwork;
     }
   }
-  [[MPNowPlayingInfoCenter defaultCenter] setNowPlayingInfo:dic];
-}
-
-- (void)updateControlCenterInfo {
-  NSDictionary *info = [[MPNowPlayingInfoCenter defaultCenter] nowPlayingInfo];
-  NSMutableDictionary *dic = [NSMutableDictionary dictionaryWithDictionary:info];
   dic[MPNowPlayingInfoPropertyElapsedPlaybackTime] = [NSNumber numberWithDouble:[self.player currentTime]];
   dic[MPMediaItemPropertyPlaybackDuration] = [NSNumber numberWithDouble:[self.player duration]];
   [[MPNowPlayingInfoCenter defaultCenter] setNowPlayingInfo:dic];

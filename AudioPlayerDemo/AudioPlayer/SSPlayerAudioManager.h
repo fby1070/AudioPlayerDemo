@@ -108,7 +108,7 @@ typedef enum : NSUInteger {
 
 /**
  根据序号播放
-
+ 
  @param index 在列表中的位置
  */
 - (void)playWithAudioIndex:(NSInteger)index;
@@ -129,7 +129,7 @@ typedef enum : NSUInteger {
 
 /**
  设置播放进度
-
+ 
  @param time 时间
  */
 - (void)setCurrentTime:(NSTimeInterval)time;
