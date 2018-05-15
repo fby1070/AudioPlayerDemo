@@ -19,8 +19,6 @@
 @property (nonatomic, strong, readwrite) NSArray<NSArray<SSAudio *> *> *categoryList;
 @property (nonatomic, strong) NSArray<SSPlayerCurrentModel *> *savePlayerInfo;
 @property (nonatomic, strong) id<INetRequestHandle> requestHandle;
-//为了偷偷的帮你重新请求一次设置的标志位
-@property (nonatomic, assign) BOOL replayed;
 @end
 
 @implementation AudioManager
@@ -34,38 +32,34 @@
   return self;
 }
 
-//无网络 暂时注释
+//数据请求
 - (void)requestAudioList {
-  //  AudioListNetRequestBean *requestBean = [[AudioListNetRequestBean alloc] init];
-  //  self.isRequsetingNetwork = YES;
-  //  __weak typeof(self)weakself = self;
-  //
-  //  self.requestHandle = [self.playNetEngine requestDomainBeanWithRequestDomainBean:requestBean beginBlock:^{
-  //    if (self.beginBlock) {
-  //      self.beginBlock();
-  //    }
-  //  } successedBlock:^(id respondDomainBean) {
-  //    //把数据交给playerManager
-  //    self.isRequsetingNetwork = NO;
-  //    [self playerLoadData:respondDomainBean];
-  //    if (weakself.successBlock != nil) {
-  //      weakself.successBlock(respondDomainBean);
-  //    }
-  //  } failedBlock:^(ErrorBean *error) {
-  //    self.isRequsetingNetwork = NO;
-  //    if (weakself.errorBlock != nil) {
-  //      weakself.errorBlock(error);
-  //    }
-  //  } endBlock:^{
-  //    if (self.endBlock) {
-  //      self.endBlock();
-  //    }
-  //  }];
+  AudioListNetRequestBean *requestBean = [[AudioListNetRequestBean alloc] init];
+  self.isRequsetingNetwork = YES;
+  __weak typeof(self)weakself = self;
   
-  self.categoryList = @[[self fmList], [self audioList]];
-  //创建播放器保存信息数组
-  [self creatSavePlayerInfo];
-  self.isRequsetingNetwork = NO;
+  self.requestHandle = [self.playNetEngine requestDomainBeanWithRequestDomainBean:requestBean beginBlock:^{
+    if (self.beginBlock) {
+      self.beginBlock();
+    }
+  } successedBlock:^(id respondDomainBean) {
+    //把数据交给playerManager
+    self.isRequsetingNetwork = NO;
+    [self playerLoadData:respondDomainBean];
+    [self creatSavePlayerInfo];
+    if (weakself.successBlock != nil) {
+      weakself.successBlock(respondDomainBean);
+    }
+  } failedBlock:^(ErrorBean *error) {
+    self.isRequsetingNetwork = NO;
+    if (weakself.errorBlock != nil) {
+      weakself.errorBlock(error);
+    }
+  } endBlock:^{
+    if (self.endBlock) {
+      self.endBlock();
+    }
+  }];
 }
 
 - (void)cancelRequest {
@@ -105,7 +99,6 @@
     } else {
       [self.playerAudioManager playWithAudioIndex:model.audioIndex + 1];
     }
-    self.replayed = NO;
   }
   [self.playerAudioManager play];
 }
@@ -127,11 +120,6 @@
       [self next];
     }
   }
-  
-}
-
-- (NSError *)error {
-  return self.playerAudioManager.error;
 }
 
 - (void)pause {
@@ -139,12 +127,15 @@
 }
 
 - (void)next {
-  self.replayed = NO;
   [self.playerAudioManager next];
 }
 
 - (void)previous {
   [self.playerAudioManager previous];
+}
+
+- (NSError *)error {
+  return self.playerAudioManager.error;
 }
 
 - (SSPlayerCurrentModel *)currentModel {
@@ -185,6 +176,10 @@
   model.currentTime = self.playerAudioManager.currentModel.currentTime;
 }
 
+- (void)setCurrentTime:(NSTimeInterval)time {
+  [self.playerAudioManager setCurrentTime:time];
+}
+
 -(void)remoteControlReceivedWithEvent:(UIEvent *)event {
   [self.playerAudioManager remoteControlReceivedWithEvent:event];
 }
@@ -193,35 +188,29 @@
 
 - (void)player:(SSPlayerAudioManager *)player state:(SSPlayerPlayState)state {
   self.state = state;
-  if (state == SSPlayerPlayStateError) {
-    NSLog(@"播放失败");
-    
-  }
-  if (self.delegate && [self.delegate respondsToSelector:@selector(playerState:)]) {
-    [self.delegate playerState:state];
+  if (self.delegate && [self.delegate respondsToSelector:@selector(player:state:)]) {
+    [self.delegate player:self state:state];
   }
 }
 
 - (void)player:(SSPlayerAudioManager *)player playMode:(SSPlayerPlayMode)playMode {
   self.playMode = playMode;
-  if (self.delegate && [self.delegate respondsToSelector:@selector(playerPlayMode:)]) {
-    [self.delegate playerPlayMode:playMode];
+  if (self.delegate && [self.delegate respondsToSelector:@selector(player:playMode:)]) {
+    [self.delegate player:self playMode:playMode];
   }
 }
 
 - (void)player:(SSPlayerAudioManager *)player errorCode:(SSAudioStreamerErrorCode)errorCode {
   if (errorCode == SSudioStreamerNetworkError) {
     NSLog(@"网络错误");
-    if (!self.replayed) {
-      self.replayed = YES;
-      [self.playerAudioManager play];
-    }
   } else if (errorCode == SSudioStreamerNetworkError) {
     NSLog(@"解析错误");
   } else {
     NSLog(@"未知错误");
   }
-  
+  if (self.delegate && [self.delegate respondsToSelector:@selector(player:errorCode:)]) {
+    [self.delegate player:self errorCode:errorCode];
+  }
 }
 
 #pragma mark 单例
@@ -241,96 +230,5 @@ static AudioManager* _instance = nil;
 
 - (id) copyWithZone:(struct _NSZone *)zone {
   return [AudioManager shareInstance];
-}
-
-- (void)failedRequest {
-  self.isRequsetingNetwork = YES;
-  [self failedLoad];
-}
-
-- (void)threeSecondsLoad {
-  self.isRequsetingNetwork = YES;
-  [NSTimer scheduledTimerWithTimeInterval:3.0 target:self selector:@selector(delayMethod) userInfo:nil repeats:NO];
-}
-
-- (void)delayMethod {
-  self.categoryList = @[[self fmList], [self audioList]];
-  //创建播放器保存信息数组
-  [self creatSavePlayerInfo];
-  self.isRequsetingNetwork = NO;
-}
-
-- (void)failedLoad {
-  self.isRequsetingNetwork = NO;
-}
-
-- (NSArray *)audioList {
-  //数据
-  SSAudio *audio0 = [[SSAudio alloc] init];
-  audio0.url = @"http://other.web.re01.sycdn.kuwo.cn/resource/n3/67/10/2645918637.mp3";
-  audio0.name = @"你还要我怎样你还要我怎样你还要我怎样你还要我怎样你还要我怎样你还要我怎样";
-  audio0.singer = @"薛之谦";
-  audio0.cover = @"http://star.kuwo.cn/star/starheads/180/10/94/745334819.jpg";
-  audio0.length = 310;
-  
-  SSAudio *audio1 = [[SSAudio alloc] init];
-  audio1.url = @"http://other.web.ra01.sycdn.kuwo.cn/resource/n3/128/3/11/3233852694.mp3";
-  audio1.name = @"醉赤壁";
-  audio1.singer = @"林俊杰";
-  audio1.cover = @"https://y.gtimg.cn/music/photo_new/T002R300x300M000002g6zv02X7SNi.jpg?max_age=2592000";
-  audio0.length = 281;
-  
-  SSAudio *audio2 = [[SSAudio alloc] init];
-  audio2.url = @"http://vip.baidu190.com/uploads/2017/201710b36c2ec318a5d3170b4610cd31c45de9.mp3";
-  audio2.name = @"追光者";
-  audio2.singer = @"汪苏泷";
-  audio2.cover = @"https://y.gtimg.cn/music/photo_new/T002R300x300M000001OJP0R3NGeiF.jpg?max_age=2592000";
-  audio2.length = 249;
-  
-  SSAudio *audio3 = [[SSAudio alloc] init];
-  audio3.url = @"http://vip.baidu190.com/uploads/2017/2017106d7d03d770c6e2fa04efcc0c93d2f368.mp3";
-  audio3.name = @"This Girl";
-  audio3.singer = @"Kungs";
-  audio3.cover = @"https://y.gtimg.cn/music/photo_new/T002R300x300M000004cZz532Um5mc.jpg?max_age=2592000";
-  audio3.length = 195;
-  
-  return @[audio0, audio1, audio2, audio3];
-}
-
-- (NSArray *)fmList {
-  //数据
-  SSAudio *audio0 = [[SSAudio alloc] init];
-  audio0.url = @"http://vip.baidu190.com/uploads/2017/201710a497c90917fe0b918fb85819bc541344.mp3";
-  audio0.name = @"拥抱";
-  audio0.singer = @"周玥翻唱";
-  audio0.cover = @"https://y.gtimg.cn/music/photo_new/T002R300x300M000000g4srs0OyIED.jpg?max_age=2592000";
-  audio0.length = 263;
-  
-  SSAudio *audio1 = [[SSAudio alloc] init];
-  audio1.url = @"http://vip.baidu190.com/uploads/2017/20171068c49a4e33b0838c4b2d390d75b36df3.mp3";
-  audio1.name = @"自导自演";
-  audio1.singer = @"周杰伦";
-  audio1.cover = @"https://y.gtimg.cn/music/photo_new/T002R300x300M000000bviBl4FjTpO.jpg?max_age=2592000";
-  audio1.length = 255;
-  
-  SSAudio *audio2 = [[SSAudio alloc] init];
-  audio2.url = @"http://other.web.rh01.sycdn.kuwo.cn/resource/n3/42/74/293434430.mp3";
-  audio2.name = @"We Don't Talk Anymore";
-  audio2.singer = @"双笙";
-  audio2.cover = @"http://star.kuwo.cn/star/starheads/180/96/28/4279064489.jpg";
-  audio2.length = 263;
-  
-  SSAudio *audio3 = [[SSAudio alloc] init];
-  audio3.url = @"http://vip.baidu190.com/uploads/2017/201710c211911f1abf480e4d0337583bd323b6.mp3";
-  audio3.name = @"还不是因为你长得不好看";
-  audio3.singer = @"希瑟";
-  audio3.cover = @"https://y.gtimg.cn/music/photo_new/T002R300x300M000002GWwod4DjviD.jpg?max_age=2592000";
-  audio3.length = 264;
-  
-  return @[audio0, audio1, audio2, audio3];
-}
-
-- (void)setCurrentTime:(NSTimeInterval)time {
-  [self.playerAudioManager setCurrentTime:time];
 }
 @end

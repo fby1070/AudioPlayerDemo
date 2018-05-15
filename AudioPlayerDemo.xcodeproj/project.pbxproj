@@ -32,6 +32,7 @@
 		8F896BC5209AEF4400B88D30 /* SSPlayerCurrentModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F896BC4209AEF4400B88D30 /* SSPlayerCurrentModel.m */; };
 		8F896BC9209AFB9000B88D30 /* SSPlayerTimeFormat.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F896BC8209AFB9000B88D30 /* SSPlayerTimeFormat.m */; };
 		8F896BCC209C137700B88D30 /* SSUIPlayerControlManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F896BCB209C137700B88D30 /* SSUIPlayerControlManager.m */; };
+		8FD9E6FE20AA799700B79A84 /* SSTestData.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FD9E6FC20AA799700B79A84 /* SSTestData.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -103,6 +104,8 @@
 		8F896BC8209AFB9000B88D30 /* SSPlayerTimeFormat.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SSPlayerTimeFormat.m; sourceTree = "<group>"; };
 		8F896BCA209C137700B88D30 /* SSUIPlayerControlManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SSUIPlayerControlManager.h; sourceTree = "<group>"; };
 		8F896BCB209C137700B88D30 /* SSUIPlayerControlManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SSUIPlayerControlManager.m; sourceTree = "<group>"; };
+		8FD9E6FC20AA799700B79A84 /* SSTestData.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SSTestData.m; sourceTree = "<group>"; };
+		8FD9E6FD20AA799700B79A84 /* SSTestData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SSTestData.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -263,6 +266,8 @@
 		8F896BC6209AFB7E00B88D30 /* PlayerTool */ = {
 			isa = PBXGroup;
 			children = (
+				8FD9E6FD20AA799700B79A84 /* SSTestData.h */,
+				8FD9E6FC20AA799700B79A84 /* SSTestData.m */,
 				8F896BC7209AFB9000B88D30 /* SSPlayerTimeFormat.h */,
 				8F896BC8209AFB9000B88D30 /* SSPlayerTimeFormat.m */,
 			);
@@ -451,6 +456,7 @@
 				8F356F7220A4208A00EDE254 /* Track.m in Sources */,
 				8F356F6F20A41CCB00EDE254 /* SSDouAudioStream.m in Sources */,
 				8F356F4720A14D0700EDE254 /* SSPlayerNetEngine.m in Sources */,
+				8FD9E6FE20AA799700B79A84 /* SSTestData.m in Sources */,
 				8F896BC5209AEF4400B88D30 /* SSPlayerCurrentModel.m in Sources */,
 				8F356F5520A183D600EDE254 /* AudioListDomainBeanHelper.m in Sources */,
 				8F356F6120A1941E00EDE254 /* AudioManager.m in Sources */,

@@ -19,9 +19,9 @@ typedef enum : NSUInteger {
 } SSPlayerPlayState;
 
 typedef enum : NSUInteger {
-  SSudioStreamerUnknownError,
-  SSudioStreamerNetworkError,
-  SSAudioStreamerDecodingError
+  SSudioStreamerUnknownError,             //未知错误
+  SSudioStreamerNetworkError,             //网络异常
+  SSAudioStreamerDecodingError            //解析错误
 } SSAudioStreamerErrorCode;
 
 @class SSDouAudioStream;

@@ -32,7 +32,6 @@
       } else {
         [[AudioManager shareInstance] setAudioList:[AudioManager shareInstance].categoryList.firstObject];
       }
-      
     }
   }];
 

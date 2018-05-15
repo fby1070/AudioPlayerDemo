@@ -13,6 +13,7 @@
 #import "SSPlayerAudioManager.h"
 
 @class SSAudio;
+@class AudioManager;
 
 @protocol AudioManagerDelegate<NSObject>
 
@@ -23,14 +24,21 @@
  
  @param state 播放状态
  */
-- (void)playerState:(SSPlayerPlayState)state;
+- (void)player:(AudioManager *)player state:(SSPlayerPlayState)state;
 
 /**
  播放模式
  
  @param playMode 播放模式
  */
-- (void)playerPlayMode:(SSPlayerPlayMode)playMode;
+- (void)player:(AudioManager *)player playMode:(SSPlayerPlayMode)playMode;
+
+/**
+ 错误码
+ 
+ @param errorCode 播放模式
+ */
+- (void)player:(AudioManager *)player errorCode:(SSAudioStreamerErrorCode)errorCode;
 @end
 
 @interface AudioManager : NSObject
@@ -43,22 +51,22 @@
 /**
  *  音频列表加载失败回调block
  */
-@property (copy, nonatomic) void (^errorBlock)(NSError *error);
+@property (nonatomic, copy) void (^errorBlock)(NSError *error);
 
 /**
  *  音频加载成功
  */
-@property (copy, nonatomic) void (^successBlock)(AudioListNetRespondBean *responseBean);
+@property (nonatomic, copy) void (^successBlock)(AudioListNetRespondBean *responseBean);
 
 /**
  *  音频列表开始要加载时
  */
-@property (copy, nonatomic) void (^beginBlock)(void);
+@property (nonatomic, copy) void (^beginBlock)(void);
 
 /**
  *  音频列表结束加载时
  */
-@property (copy, nonatomic) void (^endBlock)(void);
+@property (nonatomic, copy) void (^endBlock)(void);
 
 /**
  代理
@@ -105,7 +113,7 @@
 + (instancetype)shareInstance;
 
 /**
- 切换播放列表
+ 设置播放列表
  
  @param audioList 播放列表
  */
@@ -142,18 +150,11 @@
 - (void)cancelRequest;
 
 /**
- 设置播放模式
+ 设置播放模式（默认列表循环）
  
  @param playMode 播放模式
  */
 - (void)settingUpPlayMode:(SSPlayerPlayMode)playMode;
-
-/**
- 接收到远程控制时执行的方法
- 
- @param event event
- */
--(void)remoteControlReceivedWithEvent:(UIEvent *)event;
 
 /**
  设置进度
@@ -162,7 +163,10 @@
  */
 - (void)setCurrentTime:(NSTimeInterval)time;
 
-- (void)failedRequest;
-
-- (void)threeSecondsLoad;
+/**
+ 接收到远程控制时执行的方法（在APPDelegate里调用，否则控制中心以及锁屏后的播放器操作按键不起作用）
+ 
+ @param event event
+ */
+-(void)remoteControlReceivedWithEvent:(UIEvent *)event;
 @end

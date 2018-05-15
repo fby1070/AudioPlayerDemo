@@ -90,8 +90,6 @@
     } else {
       [[AudioManager shareInstance] play];
     }
-    
-    
     if (action != nil) {
       action();
     }
