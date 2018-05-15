@@ -26,7 +26,6 @@
  [self.rightButton setImage:[UIImage imageNamed:@"cm2_list_icn_loading1"] forState:UIControlStateNormal];
   UIBarButtonItem *item = [[UIBarButtonItem alloc] initWithCustomView:self.rightButton];
   self.navigationItem.rightBarButtonItem = item;
-  
   [RACObserve([AudioManager shareInstance], state) subscribeNext:^(id x) {
     if ([x integerValue] == SSPlayerPlayStateBuffering || [x integerValue] == SSPlayerPlayStatePlaying ) {
       NSMutableArray *images = [NSMutableArray new];
@@ -48,9 +47,6 @@
       [self.rightButton.imageView stopAnimating];
     }
   }];
-  
-  
-  
   [self.rightButton addTarget:self action:@selector(goPlayer) forControlEvents:UIControlEventTouchUpInside];
 }
 

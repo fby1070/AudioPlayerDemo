@@ -24,6 +24,7 @@
   [super viewDidLoad];
   self.view.backgroundColor = [UIColor whiteColor];
   self.navigationController.title = @"播放器";
+  [[AudioManager shareInstance] settingUpPlayMode:SSPlayerPlayModeRepeatList];
 
   [RACObserve([AudioManager shareInstance], categoryList) subscribeNext:^(NSArray *x) {
     if (x.count > 0) {
@@ -77,7 +78,7 @@
   }];
   
   [[coverLoading rac_signalForControlEvents:UIControlEventTouchUpInside] subscribeNext:^(id x) {
-    [[AudioManager shareInstance] threeSecondsLoad];
+
   }];
   
 
@@ -130,12 +131,8 @@
   [RACObserve([AudioManager shareInstance], playMode) subscribeNext:^(id x) {
     if ([x integerValue] == SSPlayerPlayModeRepeatOne) {
       [playModeButton setImage:[UIImage imageNamed:@"cm2_icn_one_prs"] forState:UIControlStateNormal];
-//      [playModeButton setImage:[UIImage imageNamed:@"cm2_icn_one_prs"] forState:UIControlStateHighlighted];
     }  else {
-      
       [playModeButton setImage:[UIImage imageNamed:@"cm2_icn_one"] forState:UIControlStateNormal];
-//      [playModeButton setImage:[UIImage imageNamed:@"cm2_icn_loop"] forState:UIControlStateNormal];
-//      [playModeButton setImage:[UIImage imageNamed:@"cm2_icn_loop_prs"] forState:UIControlStateHighlighted];
     }
   }];
   
@@ -233,13 +230,14 @@
   }];
   
   UIButton *setCurrentTime = [[UIButton alloc] init];
-  [setCurrentTime setTitle:@"设置进度" forState:UIControlStateNormal];
+  setCurrentTime.titleLabel.font = [UIFont systemFontOfSize:12];
+  [setCurrentTime setTitle:@"设置进度到4分钟" forState:UIControlStateNormal];
   [setCurrentTime setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
   [self.view addSubview:setCurrentTime];
   [setCurrentTime mas_makeConstraints:^(MASConstraintMaker *make) {
-    make.left.equalTo(self.view).offset(80);
-    make.top.equalTo(self.view).offset(80);
-    make.size.mas_equalTo(CGSizeMake(150, 80));
+    make.right.equalTo(musicButton.mas_left).offset(-10);
+    make.centerY.equalTo(musicButton);
+    make.size.mas_equalTo(CGSizeMake(100, 80));
   }];
   
   [[setCurrentTime rac_signalForControlEvents:UIControlEventTouchUpInside] subscribeNext:^(id x) {

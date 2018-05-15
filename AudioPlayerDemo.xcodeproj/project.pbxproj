@@ -143,30 +143,6 @@
 			name = Pods;
 			sourceTree = "<group>";
 		};
-		8F356F4420A14CE700EDE254 /* PlayerNetEngine */ = {
-			isa = PBXGroup;
-			children = (
-				8F356F4520A14D0700EDE254 /* SSPlayerNetEngine.h */,
-				8F356F4620A14D0700EDE254 /* SSPlayerNetEngine.m */,
-			);
-			path = PlayerNetEngine;
-			sourceTree = "<group>";
-		};
-		8F356F5220A1830400EDE254 /* Interface */ = {
-			isa = PBXGroup;
-			children = (
-				8F356F5320A183D600EDE254 /* AudioListDomainBeanHelper.h */,
-				8F356F5420A183D600EDE254 /* AudioListDomainBeanHelper.m */,
-				8F356F5620A183F800EDE254 /* AudioListNetRequestBean.h */,
-				8F356F5720A183F800EDE254 /* AudioListNetRequestBean.m */,
-				8F356F5920A1842800EDE254 /* AudioListNetRespondBean.h */,
-				8F356F5A20A1842800EDE254 /* AudioListNetRespondBean.m */,
-				8F356F5C20A1845D00EDE254 /* AudioListParseDomainBeanToDD.h */,
-				8F356F5D20A1845D00EDE254 /* AudioListParseDomainBeanToDD.m */,
-			);
-			path = Interface;
-			sourceTree = "<group>";
-		};
 		8F356F6520A1BCB200EDE254 /* Controller */ = {
 			isa = PBXGroup;
 			children = (
@@ -181,8 +157,16 @@
 		8F356F6C20A2F3C700EDE254 /* AudioNetwork */ = {
 			isa = PBXGroup;
 			children = (
-				8F356F5220A1830400EDE254 /* Interface */,
-				8F356F4420A14CE700EDE254 /* PlayerNetEngine */,
+				8F356F4520A14D0700EDE254 /* SSPlayerNetEngine.h */,
+				8F356F4620A14D0700EDE254 /* SSPlayerNetEngine.m */,
+				8F356F5320A183D600EDE254 /* AudioListDomainBeanHelper.h */,
+				8F356F5420A183D600EDE254 /* AudioListDomainBeanHelper.m */,
+				8F356F5620A183F800EDE254 /* AudioListNetRequestBean.h */,
+				8F356F5720A183F800EDE254 /* AudioListNetRequestBean.m */,
+				8F356F5920A1842800EDE254 /* AudioListNetRespondBean.h */,
+				8F356F5A20A1842800EDE254 /* AudioListNetRespondBean.m */,
+				8F356F5C20A1845D00EDE254 /* AudioListParseDomainBeanToDD.h */,
+				8F356F5D20A1845D00EDE254 /* AudioListParseDomainBeanToDD.m */,
 			);
 			path = AudioNetwork;
 			sourceTree = "<group>";
